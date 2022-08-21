@@ -1,11 +1,9 @@
 //Selects the selector
 let priceT = document.querySelectorAll(".wpforms-payment-price");
+let checkbtns = document.querySelectorAll(".dace-classes ul li");
 
 //this will convert the total to hours instead of minutes
 function converTotal(theprice) {
-  //grab the total by wpforms and divide it by 60
-  let total = document.querySelector(".wpforms-payment-total").innerText;
-  let newTotal = total.replace("$ ", "") / 60;
   //This array contains the pricing rules
   let dynamicPrices = {
     0.5: " hours for $25",
@@ -38,6 +36,9 @@ function converTotal(theprice) {
     11: " hours for $286.50",
     12: " hours for $319.50",
   };
+  //grab the total by wpforms and divide it by 60
+  let total = document.querySelector(".wpforms-payment-total").innerText;
+  let newTotal = total.replace("$ ", "") / 60;
   //Default value if the pricing rules is not on the list above
   const dynamicDefualt = " hours. Please contact support for pricing";
   //This filters the pricing rules for the dynamic price
@@ -45,17 +46,27 @@ function converTotal(theprice) {
   //Append and print the total of hours
   let hours = document.querySelector(theprice);
   hours.innerHTML = newTotal + myDynamicPrice;
+  //Check if total is 0
+  if (total == "$ 0.00") {
+    let hours = document.querySelector(theprice);
+    hours.innerHTML = "$ 0.00";
+  }
+  //end of convert total
 }
-//Iterates through each select and runs the function to display the price after the click
-for (let pricen of priceT) {
-  pricen.addEventListener("click", function () {
-    //Resets the message
-    let hours = document.querySelector(".new-price");
-    hours.innerHTML = "";
-    //Displays the new message
-    converTotal(".new-price");
-  });
-}
+//Iterates through each select and and check box and then runs the function to display the price after the click
+
+document.addEventListener("click", (event) => {
+  if (event.target !== priceT && event.target !== checkbtns) {
+    //set time out in order to update the prices properly, as there's a little delay in changing the price
+    function timeFunction() {
+      setTimeout(function () {
+        converTotal(".new-price");
+      }, 500);
+    }
+    timeFunction();
+  }
+  //handle click
+});
 
 //on summary page
 document
